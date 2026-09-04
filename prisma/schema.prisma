@@ -144,3 +144,18 @@ model AdminUser {
 
   @@map("admin_users")
 }
+
+// ===================================================
+// Model: Nhật ký hệ thống (System Logs)
+// ===================================================
+model SystemLog {
+  id        String   @id @default(cuid())
+  level     String   // INFO | SUCCESS | WARN | ERROR
+  category  String   // MIGRATION | UPLOAD | CAR | BIKE | BANNER | SYSTEM
+  message   String   @db.Text
+  metadata  Json?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("system_logs")
+}
+

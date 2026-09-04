@@ -19,9 +19,13 @@ import { uploadToMinio, deleteFromMinio, getMimeType } from '@/lib/minio';
 // ─── POST /api/upload ─────────────────────────────────────────────────────────
 export const POST = withAuth(async (req) => {
   try {
+    const { searchParams } = new URL(req.url);
+    const queryFolder = searchParams.get('folder');
+
     const formData = await req.formData();
     const file = formData.get('file') as File | null;
-    const folder = (formData.get('folder') as string) ?? 'misc';
+    const formFolder = formData.get('folder') as string | null;
+    const folder = formFolder || queryFolder || 'uploads';
 
     if (!file) {
       return NextResponse.json(
@@ -61,13 +65,19 @@ export const POST = withAuth(async (req) => {
     const publicUrl = await uploadToMinio(key, buffer, getMimeType(file.name));
 
     return NextResponse.json(
-      { data: { url: publicUrl, key }, message: 'Upload ảnh thành công' },
+      {
+        data: { url: publicUrl, key },
+        url: publicUrl,
+        key,
+        message: 'Upload ảnh thành công',
+      },
       { status: 201 }
     );
-  } catch (error) {
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : 'Upload thất bại';
     console.error('[POST /api/upload]', error);
     return NextResponse.json(
-      { error: 'Internal Server Error', message: 'Upload thất bại' },
+      { error: 'Internal Server Error', message: `Lỗi upload: ${msg}` },
       { status: 500 }
     );
   }

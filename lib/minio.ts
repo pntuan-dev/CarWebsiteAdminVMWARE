@@ -40,7 +40,6 @@ export async function uploadToMinio(
     Key: key,
     Body: body,
     ContentType: contentType,
-    ACL: 'public-read', // Cho phép đọc công khai
   });
 
   await s3Client.send(command);

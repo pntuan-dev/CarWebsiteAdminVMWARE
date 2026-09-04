@@ -18,7 +18,7 @@ const updateCarSchema = z.object({
   description: z.string().optional(),
   priceWithBattery: z.number().int().positive().optional(),
   priceWithoutBattery: z.number().int().positive().optional(),
-  batteryRentMonthly: z.number().int().positive().nullable().optional(),
+  batteryRentMonthly: z.number().int().min(0).nullable().optional(),
   rangePerCharge: z.string().optional(),
   maxPower: z.string().optional(),
   maxTorque: z.string().optional(),

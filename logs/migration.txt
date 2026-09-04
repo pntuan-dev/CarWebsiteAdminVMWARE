@@ -1,0 +1,114 @@
+
+════════════════════════════════════════════════════════════════════════
+                 VINFAST DATA & MINIO MIGRATION LOG                     
+════════════════════════════════════════════════════════════════════════
+Thời gian: 15:20:47 4/9/2026
+Chế độ: THỰC THI THẬT
+MinIO: http://192.168.247.130:9000 | Bucket: websitecar
+PostgreSQL: postgresql://myuser:****@192.168.247.130:5432/appdb
+File log TXT: C:\Users\TuanPhan\source\VMWARE\CarWebsiteAdminVMWARE\logs\migration.txt
+════════════════════════════════════════════════════════════════════════
+
+
+══════════════════════════════════════════════════════════════════════
+  BƯỚC 1: Kiểm tra Bucket MinIO
+══════════════════════════════════════════════════════════════════════
+[4/9/2026 15:20:47] [INFO] Kết nối MinIO tại 192.168.247.130:9000, kiểm tra bucket "websitecar"...
+[4/9/2026 15:20:47] [SUCCESS] Bucket "websitecar" đã tồn tại và sẵn sàng
+
+══════════════════════════════════════════════════════════════════════
+  BƯỚC 2: Quét và Upload Hình Ảnh lên MinIO
+══════════════════════════════════════════════════════════════════════
+[4/9/2026 15:20:47] [INFO] Đọc thư mục ảnh: C:\Users\TuanPhan\source\VMWARE\CarWebsiteAdminVMWARE\public\images\vinfast
+[4/9/2026 15:20:47] [INFO] Tìm thấy 40 file hình ảnh hợp lệ
+[4/9/2026 15:20:47] [SUCCESS] Upload thành công: cars/vf-2.png → http://192.168.247.130:9000/websitecar/cars/vf-2.png
+[4/9/2026 15:20:47] [SUCCESS] Upload thành công: cars/vf-6.webp → http://192.168.247.130:9000/websitecar/cars/vf-6.webp
+[4/9/2026 15:20:47] [SUCCESS] Upload thành công: logo.png → http://192.168.247.130:9000/websitecar/logo.png
+[4/9/2026 15:20:47] [SUCCESS] Upload thành công: banners/banner-doi-xe.jpg → http://192.168.247.130:9000/websitecar/banners/banner-doi-xe.jpg
+[4/9/2026 15:20:47] [SUCCESS] Upload thành công: logo-footer.webp → http://192.168.247.130:9000/websitecar/logo-footer.webp
+[4/9/2026 15:20:47] [SUCCESS] Upload thành công: cars/vf-7.webp → http://192.168.247.130:9000/websitecar/cars/vf-7.webp
+[4/9/2026 15:20:47] [SUCCESS] Upload thành công: bikes/flazz-max.webp → http://192.168.247.130:9000/websitecar/bikes/flazz-max.webp
+[4/9/2026 15:20:47] [SUCCESS] Upload thành công: ecosystem/mlttvn-icon.webp → http://192.168.247.130:9000/websitecar/ecosystem/mlttvn-icon.webp
+[4/9/2026 15:20:47] [SUCCESS] Upload thành công: bikes/amio-s.webp → http://192.168.247.130:9000/websitecar/bikes/amio-s.webp
+[4/9/2026 15:20:47] [SUCCESS] Upload thành công: cars/nerio-green.webp → http://192.168.247.130:9000/websitecar/cars/nerio-green.webp
+[4/9/2026 15:20:47] [SUCCESS] Upload thành công: cars/minio-green.webp → http://192.168.247.130:9000/websitecar/cars/minio-green.webp
+[4/9/2026 15:20:47] [SUCCESS] Upload thành công: bikes/drgn-fly.webp → http://192.168.247.130:9000/websitecar/bikes/drgn-fly.webp
+[4/9/2026 15:20:48] [SUCCESS] Upload thành công: cars/herio-green.webp → http://192.168.247.130:9000/websitecar/cars/herio-green.webp
+[4/9/2026 15:20:48] [SUCCESS] Upload thành công: bikes/evo-lite-neo.webp → http://192.168.247.130:9000/websitecar/bikes/evo-lite-neo.webp
+[4/9/2026 15:20:48] [SUCCESS] Upload thành công: ecosystem/tam-che-pin.webp → http://192.168.247.130:9000/websitecar/ecosystem/tam-che-pin.webp
+[4/9/2026 15:20:48] [SUCCESS] Upload thành công: cars/vf-9.webp → http://192.168.247.130:9000/websitecar/cars/vf-9.webp
+[4/9/2026 15:20:48] [SUCCESS] Upload thành công: bikes/kinet.webp → http://192.168.247.130:9000/websitecar/bikes/kinet.webp
+[4/9/2026 15:20:48] [SUCCESS] Upload thành công: cars/ec-van.webp → http://192.168.247.130:9000/websitecar/cars/ec-van.webp
+[4/9/2026 15:20:48] [SUCCESS] Upload thành công: cars/vf-8.webp → http://192.168.247.130:9000/websitecar/cars/vf-8.webp
+[4/9/2026 15:20:48] [SUCCESS] Upload thành công: banners/banner-mpv7-limo.jpg → http://192.168.247.130:9000/websitecar/banners/banner-mpv7-limo.jpg
+[4/9/2026 15:20:48] [SUCCESS] Upload thành công: cars/vf-mpv-7.webp → http://192.168.247.130:9000/websitecar/cars/vf-mpv-7.webp
+[4/9/2026 15:20:48] [SUCCESS] Upload thành công: banners/banner-vf2.jpg → http://192.168.247.130:9000/websitecar/banners/banner-vf2.jpg
+[4/9/2026 15:20:48] [SUCCESS] Upload thành công: ecosystem/pin-o-to.png → http://192.168.247.130:9000/websitecar/ecosystem/pin-o-to.png
+[4/9/2026 15:20:48] [SUCCESS] Upload thành công: ecosystem/tram-sac-pin.png → http://192.168.247.130:9000/websitecar/ecosystem/tram-sac-pin.png
+[4/9/2026 15:20:48] [SUCCESS] Upload thành công: cars/vf-5.webp → http://192.168.247.130:9000/websitecar/cars/vf-5.webp
+[4/9/2026 15:20:48] [SUCCESS] Upload thành công: banners/banner-tri-an-xmd.jpg → http://192.168.247.130:9000/websitecar/banners/banner-tri-an-xmd.jpg
+[4/9/2026 15:20:48] [SUCCESS] Upload thành công: banners/banner-sinh-nhat.jpg → http://192.168.247.130:9000/websitecar/banners/banner-sinh-nhat.jpg
+[4/9/2026 15:20:48] [SUCCESS] Upload thành công: bikes/viper.webp → http://192.168.247.130:9000/websitecar/bikes/viper.webp
+[4/9/2026 15:20:48] [SUCCESS] Upload thành công: ecosystem/sac-11kw.webp → http://192.168.247.130:9000/websitecar/ecosystem/sac-11kw.webp
+[4/9/2026 15:20:48] [SUCCESS] Upload thành công: bikes/kyo.webp → http://192.168.247.130:9000/websitecar/bikes/kyo.webp
+[4/9/2026 15:20:48] [SUCCESS] Upload thành công: bikes/verox.webp → http://192.168.247.130:9000/websitecar/bikes/verox.webp
+[4/9/2026 15:20:48] [SUCCESS] Upload thành công: cars/limo-green.png → http://192.168.247.130:9000/websitecar/cars/limo-green.png
+[4/9/2026 15:20:48] [SUCCESS] Upload thành công: ecosystem/o-golf.webp → http://192.168.247.130:9000/websitecar/ecosystem/o-golf.webp
+[4/9/2026 15:20:48] [SUCCESS] Upload thành công: ecosystem/mobile-charger.webp → http://192.168.247.130:9000/websitecar/ecosystem/mobile-charger.webp
+[4/9/2026 15:20:48] [SUCCESS] Upload thành công: bikes/feliz-ii.webp → http://192.168.247.130:9000/websitecar/bikes/feliz-ii.webp
+[4/9/2026 15:20:48] [SUCCESS] Upload thành công: cars/vf-3.webp → http://192.168.247.130:9000/websitecar/cars/vf-3.webp
+[4/9/2026 15:20:48] [SUCCESS] Upload thành công: bikes/evo-200.webp → http://192.168.247.130:9000/websitecar/bikes/evo-200.webp
+[4/9/2026 15:20:48] [SUCCESS] Upload thành công: bct.svg → http://192.168.247.130:9000/websitecar/bct.svg
+[4/9/2026 15:20:49] [SUCCESS] Upload thành công: ecosystem/thu-xang-doi-dien.png → http://192.168.247.130:9000/websitecar/ecosystem/thu-xang-doi-dien.png
+[4/9/2026 15:20:49] [SUCCESS] Upload thành công: banners/banner-xanh-sm.webp → http://192.168.247.130:9000/websitecar/banners/banner-xanh-sm.webp
+[4/9/2026 15:20:49] [SUCCESS] Hoàn tất upload: 40 ảnh thành công, 0 ảnh thất bại
+
+══════════════════════════════════════════════════════════════════════
+  BƯỚC 3: Cập Nhật & Seed Dữ Liệu vào PostgreSQL
+══════════════════════════════════════════════════════════════════════
+[4/9/2026 15:20:49] [INFO] Đọc file dữ liệu: C:\Users\TuanPhan\source\VMWARE\CarWebsiteAdminVMWARE\data\vinfast.json
+[4/9/2026 15:20:49] [INFO] Bắt đầu đồng bộ 11 mẫu Ô tô điện...
+[4/9/2026 15:20:49] [SUCCESS] [Car 1/11] VinFast VF 3 (vf-3) → http://192.168.247.130:9000/websitecar/cars/vf-3.webp
+[4/9/2026 15:20:49] [SUCCESS] [Car 2/11] VinFast VF 5 Plus (vf-5-plus) → http://192.168.247.130:9000/websitecar/cars/vf-5.webp
+[4/9/2026 15:20:49] [SUCCESS] [Car 3/11] VinFast VF 6 (vf-6) → http://192.168.247.130:9000/websitecar/cars/vf-6.webp
+[4/9/2026 15:20:49] [SUCCESS] [Car 4/11] VinFast VF 7 (vf-7) → http://192.168.247.130:9000/websitecar/cars/vf-7.webp
+[4/9/2026 15:20:49] [SUCCESS] [Car 5/11] VinFast VF 8 (vf-8) → http://192.168.247.130:9000/websitecar/cars/vf-8.webp
+[4/9/2026 15:20:49] [SUCCESS] [Car 6/11] VinFast VF 9 (vf-9) → http://192.168.247.130:9000/websitecar/cars/vf-9.webp
+[4/9/2026 15:20:49] [SUCCESS] [Car 7/11] VinFast VF 2 (vf-2) → http://192.168.247.130:9000/websitecar/cars/vf-2.png
+[4/9/2026 15:20:49] [SUCCESS] [Car 8/11] VinFast MPV 7 (vf-mpv-7) → http://192.168.247.130:9000/websitecar/cars/vf-mpv-7.webp
+[4/9/2026 15:20:49] [SUCCESS] [Car 9/11] Minio Green (minio-green) → http://192.168.247.130:9000/websitecar/cars/minio-green.webp
+[4/9/2026 15:20:49] [SUCCESS] [Car 10/11] Limo Green (limo-green) → http://192.168.247.130:9000/websitecar/cars/limo-green.png
+[4/9/2026 15:20:49] [SUCCESS] [Car 11/11] VinFast EC Van (ec-van) → http://192.168.247.130:9000/websitecar/cars/ec-van.webp
+[4/9/2026 15:20:49] [INFO] Bắt đầu đồng bộ 6 mẫu Xe máy điện...
+[4/9/2026 15:20:49] [SUCCESS] [Bike 1/6] VinFast Feliz II (feliz-ii) → http://192.168.247.130:9000/websitecar/bikes/feliz-ii.webp
+[4/9/2026 15:20:49] [SUCCESS] [Bike 2/6] VinFast Evo 200 (evo-200) → http://192.168.247.130:9000/websitecar/bikes/evo-200.webp
+[4/9/2026 15:20:49] [SUCCESS] [Bike 3/6] VinFast Amio S (amio-s) → http://192.168.247.130:9000/websitecar/bikes/amio-s.webp
+[4/9/2026 15:20:49] [SUCCESS] [Bike 4/6] VinFast Flazz Max (flazz-max) → http://192.168.247.130:9000/websitecar/bikes/flazz-max.webp
+[4/9/2026 15:20:49] [SUCCESS] [Bike 5/6] VinFast Viper (viper) → http://192.168.247.130:9000/websitecar/bikes/viper.webp
+[4/9/2026 15:20:49] [SUCCESS] [Bike 6/6] VinFast DrgnFly (drgn-fly) → http://192.168.247.130:9000/websitecar/bikes/drgn-fly.webp
+[4/9/2026 15:20:49] [INFO] Bắt đầu đồng bộ 5 Banner slider...
+[4/9/2026 15:20:49] [SUCCESS] [Banner 1/5] VinFast VF 7 → http://192.168.247.130:9000/websitecar/cars/vf-7.webp
+[4/9/2026 15:20:49] [SUCCESS] [Banner 2/5] VinFast VF 3 → http://192.168.247.130:9000/websitecar/cars/vf-3.webp
+[4/9/2026 15:20:49] [SUCCESS] [Banner 3/5] VinFast VF 9 → http://192.168.247.130:9000/websitecar/cars/vf-9.webp
+[4/9/2026 15:20:49] [SUCCESS] [Banner 4/5] VinFast VF 8 → http://192.168.247.130:9000/websitecar/cars/vf-8.webp
+[4/9/2026 15:20:49] [SUCCESS] [Banner 5/5] VinFast VF 6 → http://192.168.247.130:9000/websitecar/cars/vf-6.webp
+[4/9/2026 15:20:49] [INFO] Bắt đầu đồng bộ 4 mục Hệ sinh thái...
+[4/9/2026 15:20:49] [SUCCESS] [Ecosystem 1/4] Mạng Lưới Trạm Sạc V-GREEN Toàn Quốc → http://192.168.247.130:9000/websitecar/ecosystem/tram-sac-pin.png
+[4/9/2026 15:20:49] [SUCCESS] [Ecosystem 2/4] Bộ Sạc Treo Tường 11 kW Thông Minh → http://192.168.247.130:9000/websitecar/ecosystem/sac-11kw.webp
+[4/9/2026 15:20:49] [SUCCESS] [Ecosystem 3/4] Chính Sách Bảo Hành Số 1 Thị Trường → http://192.168.247.130:9000/websitecar/ecosystem/pin-o-to.png
+[4/9/2026 15:20:49] [SUCCESS] [Ecosystem 4/4] Thu Cũ Đổi Mới - Đổi Xăng Lấy Điện → http://192.168.247.130:9000/websitecar/ecosystem/thu-xang-doi-dien.png
+[4/9/2026 15:20:49] [INFO] Bắt đầu đồng bộ 3 Chương trình ưu đãi...
+[4/9/2026 15:20:49] [SUCCESS] [Promo 1/3] Mãnh Liệt Tinh Thần Việt Nam Lần 3
+[4/9/2026 15:20:49] [SUCCESS] [Promo 2/3] Miễn Phí Sạc Pin 01 Năm
+[4/9/2026 15:20:49] [SUCCESS] [Promo 3/3] Tặng Tiền Mặt 2 Triệu Đồng Cho Xe Máy Điện
+
+══════════════════════════════════════════════════════════════════════
+  BƯỚC 4: Khởi Tạo Tài Khoản Admin
+══════════════════════════════════════════════════════════════════════
+[4/9/2026 15:20:49] [SUCCESS] Admin user "admin@vinfast.vn" đã tồn tại trên PostgreSQL
+
+══════════════════════════════════════════════════════════════════════
+  TỔNG KẾT QUÁ TRÌNH MIGRATION
+══════════════════════════════════════════════════════════════════════
+[4/9/2026 15:20:49] [SUCCESS] Tất cả các bước migration đã hoàn tất thành công!
+[4/9/2026 15:20:49] [SUCCESS] File log văn bản (.txt) đã được lưu tại: C:\Users\TuanPhan\source\VMWARE\CarWebsiteAdminVMWARE\logs\migration.txt
