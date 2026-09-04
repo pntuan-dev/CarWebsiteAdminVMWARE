@@ -1,0 +1,146 @@
+// Prisma Schema cho CarWebsite VinFast
+// Docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ===================================================
+// Model: Ô tô điện
+// ===================================================
+model Car {
+  id                  String   @id @default(cuid())
+  name                String
+  slug                String   @unique
+  segment             String   // urban | suv | luxury | commercial
+  segmentLabel        String
+  tagline             String
+  description         String   @db.Text
+  priceWithBattery    Int      // VNĐ
+  priceWithoutBattery Int      // VNĐ
+  batteryRentMonthly  Int?     // VNĐ/tháng (tuỳ chọn)
+  rangePerCharge      String   // ví dụ: "215 km (NEDC)"
+  maxPower            String   // ví dụ: "43 mã lực (32 kW)"
+  maxTorque           String   // ví dụ: "110 Nm"
+  topSpeed            String   // ví dụ: "100 km/h"
+  seats               Int
+  airbags             Int
+  fastChargingTime    String
+  dimensions          String   // "D x R x C mm"
+  wheelbase           String
+  imageUrl            String   // MinIO public URL
+  badge               String?  // "Mới" | "Bán chạy" | "Hot" | ...
+  features            String[] // PostgreSQL array
+  depositUrl          String
+  isActive            Boolean  @default(true)
+  sortOrder           Int      @default(0)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@map("cars")
+}
+
+// ===================================================
+// Model: Xe máy điện
+// ===================================================
+model Motorbike {
+  id             String   @id @default(cuid())
+  name           String
+  slug           String   @unique
+  price          Int      // VNĐ
+  rangePerCharge String
+  topSpeed       String
+  batteryType    String
+  chargingTime   String
+  trunkCapacity  String
+  imageUrl       String   // MinIO public URL
+  tagline        String
+  badge          String?
+  isActive       Boolean  @default(true)
+  sortOrder      Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("motorbikes")
+}
+
+// ===================================================
+// Model: Banner Hero Slider
+// ===================================================
+model Banner {
+  id               String   @id @default(cuid())
+  title            String
+  subtitle         String
+  description      String   @db.Text
+  ctaText          String
+  ctaLink          String
+  secondaryCtaText String?
+  secondaryCtaLink String?
+  carImageUrl      String   // MinIO public URL
+  badge            String?
+  price            String?  // Giá hiển thị dạng text
+  specs            Json?    // [{label: string, value: string}]
+  isActive         Boolean  @default(true)
+  sortOrder        Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("banners")
+}
+
+// ===================================================
+// Model: Hệ sinh thái (Trạm sạc, Bảo hành, ...)
+// ===================================================
+model EcosystemItem {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @db.Text
+  iconName    String   // Lucide icon name
+  imageUrl    String   // MinIO public URL
+  actionText  String
+  actionLink  String
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("ecosystem_items")
+}
+
+// ===================================================
+// Model: Chương trình ưu đãi
+// ===================================================
+model Promotion {
+  id          String   @id @default(cuid())
+  title       String
+  highlight   String
+  description String   @db.Text
+  tag         String
+  validUntil  String
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("promotions")
+}
+
+// ===================================================
+// Model: Admin User
+// ===================================================
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         String   @default("admin") // admin | superadmin
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("admin_users")
+}
