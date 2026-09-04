@@ -6,7 +6,6 @@ pipeline {
         APP_IMAGE       = "${DOCKER_USER}/car-admin"
         IMAGE_TAG       = "${BUILD_NUMBER}"
         REGISTRY_CREDS  = 'dockerhub-credentials'
-        DATABASE_URL    = credentials('DATABASE_URL')
     }
 
     stages {
@@ -21,10 +20,7 @@ pipeline {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', "${REGISTRY_CREDS}") {
                         echo "Dang build Docker Image cho Admin/BE..."
-                        def appImg = docker.build(
-                            "${APP_IMAGE}:${IMAGE_TAG}",
-                            "--build-arg DATABASE_URL=\"${DATABASE_URL}\" -f Dockerfile ."
-                        )
+                        def appImg = docker.build("${APP_IMAGE}:${IMAGE_TAG}", "-f Dockerfile .")
                         appImg.push("${IMAGE_TAG}")
                         appImg.push("latest")
                     }
@@ -35,13 +31,23 @@ pipeline {
         stage('Run DB Migration') {
             steps {
                 script {
-                    echo "Chay Prisma db push dong bo database..."
+                    echo "Kiem tra va chay dong bo database (neu co DATABASE_URL)..."
                     sh """
-                        docker run --rm \\
-                            --network host \\
-                            -e DATABASE_URL="\${DATABASE_URL}" \\
-                            ${APP_IMAGE}:${IMAGE_TAG} \\
-                            npx prisma db push --skip-generate
+                        if [ -f .env ]; then
+                            set -a
+                            . ./.env
+                            set +a
+                        fi
+                        if [ -n "\$DATABASE_URL" ]; then
+                            echo "Dang dong bo schema Prisma voi database..."
+                            docker run --rm \\
+                                --network host \\
+                                -e DATABASE_URL="\$DATABASE_URL" \\
+                                ${APP_IMAGE}:${IMAGE_TAG} \\
+                                npx prisma db push --skip-generate
+                        else
+                            echo "Khong tim thay DATABASE_URL, bo qua buoc migration."
+                        fi
                     """
                 }
             }
@@ -54,6 +60,11 @@ pipeline {
                     sh """
                         export APP_IMAGE=${APP_IMAGE}
                         export IMAGE_TAG=${IMAGE_TAG}
+                        if [ -f .env ]; then
+                            set -a
+                            . ./.env
+                            set +a
+                        fi
                         docker stack deploy -c docker-compose.prod.yml admin_stack --with-registry-auth
                     """
                 }
