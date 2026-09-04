@@ -91,6 +91,8 @@ pipeline {
                             . ./.env
                             set +a
                         fi
+                        echo "Kiem tra va tao mang overlay vinfast_net neu chua co..."
+                        docker network inspect vinfast_net >/dev/null 2>&1 || docker network create --driver overlay --attachable vinfast_net
                         docker stack deploy -c docker-compose.prod.yml admin_stack --with-registry-auth
                     """
                 }
