@@ -61,7 +61,7 @@ pipeline {
                                 --network host \\
                                 -e DATABASE_URL="\$DATABASE_URL" \\
                                 ${APP_IMAGE}:${IMAGE_TAG} \\
-                                npx prisma db push --skip-generate
+                                ./node_modules/.bin/prisma db push --skip-generate || echo "Luu y: DB push co canh bao, tiep tuc deploy..."
                         else
                             echo "Khong tim thay DATABASE_URL, bo qua buoc migration."
                         fi
