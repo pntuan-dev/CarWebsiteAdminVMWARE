@@ -43,6 +43,15 @@ pipeline {
                     }
                 }
             }
+            post {
+                success {
+                    echo "Build Admin/BE thanh cong! Xoa sach Docker build cache de tiet kiem dung luong o cung..."
+                    sh 'docker builder prune -a -f'
+                }
+                failure {
+                    echo "Build Admin/BE that bai! Giu nguyen Docker build cache de debug va tan dung lai layer."
+                }
+            }
         }
 
         stage('Run DB Migration') {
