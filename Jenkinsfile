@@ -15,6 +15,23 @@ pipeline {
             }
         }
 
+        stage('Prepare Environment') {
+            steps {
+                script {
+                    echo "Chuan bi file cau hinh moi truong cho VPS..."
+                    sh """
+                        if [ -f env.pro ]; then
+                            cp env.pro .env
+                            echo "Da copy env.pro vao .env thanh cong."
+                        elif [ -f .env.pro ]; then
+                            cp .env.pro .env
+                            echo "Da copy .env.pro vao .env thanh cong."
+                        fi
+                    """
+                }
+            }
+        }
+
         stage('Build & Push Docker Image') {
             steps {
                 script {
