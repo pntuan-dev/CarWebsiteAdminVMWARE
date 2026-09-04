@@ -1,5 +1,8 @@
 import type { NextConfig } from "next";
 
+const minioHost = process.env.MINIO_ENDPOINT || "192.168.247.130";
+const minioPort = process.env.MINIO_PORT || "9000";
+
 const nextConfig: NextConfig = {
   output: "standalone",
   images: {
@@ -7,9 +10,9 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "http",
-        hostname: "192.168.247.130",
-        port: "9000",
-        pathname: "/websitecar/**",
+        hostname: minioHost,
+        port: minioPort,
+        pathname: "/**",
       },
     ],
   },

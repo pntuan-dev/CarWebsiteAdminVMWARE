@@ -6,6 +6,7 @@ pipeline {
         APP_IMAGE       = "${DOCKER_USER}/car-admin"
         IMAGE_TAG       = "${BUILD_NUMBER}"
         REGISTRY_CREDS  = 'dockerhub-credentials'
+        DATABASE_URL    = credentials('DATABASE_URL')
     }
 
     stages {
@@ -20,7 +21,10 @@ pipeline {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', "${REGISTRY_CREDS}") {
                         echo "Dang build Docker Image cho Admin/BE..."
-                        def appImg = docker.build("${APP_IMAGE}:${IMAGE_TAG}", "-f Dockerfile .")
+                        def appImg = docker.build(
+                            "${APP_IMAGE}:${IMAGE_TAG}",
+                            "--build-arg DATABASE_URL=\"${DATABASE_URL}\" -f Dockerfile ."
+                        )
                         appImg.push("${IMAGE_TAG}")
                         appImg.push("latest")
                     }
@@ -35,7 +39,7 @@ pipeline {
                     sh """
                         docker run --rm \\
                             --network host \\
-                            -e DATABASE_URL="\${DATABASE_URL:-postgresql://myuser:StrongPassword123@192.168.247.130:5432/appdb}" \\
+                            -e DATABASE_URL="\${DATABASE_URL}" \\
                             ${APP_IMAGE}:${IMAGE_TAG} \\
                             npx prisma db push --skip-generate
                     """

@@ -16,10 +16,9 @@ RUN npx prisma generate
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-
+ARG DATABASE_URL
+ENV DATABASE_URL=${DATABASE_URL}
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV DATABASE_URL="postgresql://myuser:StrongPassword123@192.168.247.130:5432/appdb"
 
 # Build Next.js (standalone output)
 RUN npm run build
