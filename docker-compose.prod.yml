@@ -6,17 +6,19 @@ services:
     ports:
       - "4000:4000"
     environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - MINIO_ENDPOINT=${MINIO_ENDPOINT}
-      - MINIO_PORT=${MINIO_PORT}
-      - MINIO_USE_SSL=${MINIO_USE_SSL}
-      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
-      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
-      - MINIO_BUCKET=${MINIO_BUCKET}
-      - MINIO_PUBLIC_URL=${MINIO_PUBLIC_URL}
-      - JWT_SECRET=${JWT_SECRET}
-      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
-      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+      - DATABASE_URL=${DATABASE_URL:-postgresql://myuser:StrongPassword123@192.168.247.130:5432/appdb}
+      - MINIO_ENDPOINT=${MINIO_ENDPOINT:-192.168.247.130}
+      - MINIO_PORT=${MINIO_PORT:-9000}
+      - MINIO_USE_SSL=${MINIO_USE_SSL:-false}
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY:-admin_user}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY:-MyStrongPassword123}
+      - MINIO_BUCKET=${MINIO_BUCKET:-websitecar}
+      - MINIO_PUBLIC_URL=${MINIO_PUBLIC_URL:-http://192.168.247.130:9000/websitecar}
+      - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-change-this-in-production-min-32-chars}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN:-7d}
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://192.168.247.130:4000}
+      - PORT=4000
+      - HOSTNAME=0.0.0.0
     deploy:
       replicas: 2
       update_config:

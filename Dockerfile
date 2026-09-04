@@ -19,6 +19,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV DATABASE_URL="postgresql://myuser:StrongPassword123@192.168.247.130:5432/appdb"
 
 # Build Next.js (standalone output)
 RUN npm run build

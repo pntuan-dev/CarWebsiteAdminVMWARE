@@ -31,13 +31,13 @@ pipeline {
         stage('Run DB Migration') {
             steps {
                 script {
-                    echo "Chay Prisma migrate tren server..."
+                    echo "Chay Prisma db push dong bo database..."
                     sh """
                         docker run --rm \\
                             --network host \\
-                            -e DATABASE_URL=${DATABASE_URL} \\
+                            -e DATABASE_URL="\${DATABASE_URL:-postgresql://myuser:StrongPassword123@192.168.247.130:5432/appdb}" \\
                             ${APP_IMAGE}:${IMAGE_TAG} \\
-                            npx prisma migrate deploy
+                            npx prisma db push --skip-generate
                     """
                 }
             }
