@@ -6,8 +6,7 @@ RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN --mount=type=cache,target=/root/.npm \
-    npm ci
+RUN npm ci
 
 # Generate Prisma client
 COPY prisma ./prisma
@@ -22,8 +21,7 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 
 # Build Next.js (standalone output)
-RUN --mount=type=cache,target=/app/.next/cache \
-    npm run build
+RUN npm run build
 
 # 3. Production runner
 FROM base AS runner
