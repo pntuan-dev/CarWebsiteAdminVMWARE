@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     environment {
+        DOCKER_BUILDKIT = '1'
         DOCKER_USER     = 'tuanphan6511'
         APP_IMAGE       = "${DOCKER_USER}/car-admin"
         IMAGE_TAG       = "${BUILD_NUMBER}"
@@ -51,8 +52,8 @@ pipeline {
             }
             post {
                 success {
-                    echo "Build Admin/BE thanh cong! Xoa sach Docker build cache de tiet kiem dung luong o cung..."
-                    sh 'docker builder prune -a -f'
+                    echo "Build Admin/BE thanh cong! Don dep build cache cu (>48h hoac vuot qua 2GB), giu lai layer can thiet..."
+                    sh 'docker builder prune --filter "until=48h" --keep-storage 2GB -f || true'
                 }
                 failure {
                     echo "Build Admin/BE that bai! Giu nguyen Docker build cache de debug va tan dung lai layer."

@@ -1,9 +1,16 @@
 node_modules
 .next
 .git
+.gitignore
 .env
 .env.local
 .env.production
+*.md
+.vscode
+.gemini
+Dockerfile*
+docker-compose*
+Jenkinsfile
 logs
 *.log
 tsconfig.tsbuildinfo
