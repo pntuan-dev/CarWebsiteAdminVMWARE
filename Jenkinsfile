@@ -18,14 +18,20 @@ pipeline {
         stage('Prepare Environment') {
             steps {
                 script {
-                    echo "Chuan bi file cau hinh moi truong cho VPS..."
+                    echo "Chuan bi file cau hinh moi truong Production cho VPS..."
                     sh """
-                        if [ -f env.pro ]; then
+                        if [ -f env.production ]; then
+                            cp env.production .env
+                            echo "Da copy env.production -> .env thanh cong."
+                        elif [ -f env.pro ]; then
                             cp env.pro .env
-                            echo "Da copy env.pro vao .env thanh cong."
+                            echo "Fallback: Da copy env.pro -> .env (nen tao env.production thay the)."
                         elif [ -f .env.pro ]; then
                             cp .env.pro .env
-                            echo "Da copy .env.pro vao .env thanh cong."
+                            echo "Fallback: Da copy .env.pro -> .env."
+                        else
+                            echo "CANH BAO: Khong tim thay file env.production, env.pro hay .env.pro!"
+                            exit 1
                         fi
                     """
                 }
