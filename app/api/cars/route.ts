@@ -4,6 +4,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { withAuth } from '@/lib/middleware';
+import { logApi } from '@/lib/logger';
 import { z } from 'zod';
 
 // Schema tạo xe mới
@@ -38,11 +39,12 @@ const createCarSchema = z.object({
 
 // GET /api/cars - Công khai, Landing Page dùng
 export async function GET(req: NextRequest) {
-  try {
-    const { searchParams } = new URL(req.url);
-    const segment = searchParams.get('segment');
-    const activeOnly = searchParams.get('activeOnly') !== 'false';
+  const { searchParams } = new URL(req.url);
+  const segment = searchParams.get('segment');
+  const activeOnly = searchParams.get('activeOnly') !== 'false';
+  const input = { segment, activeOnly };
 
+  try {
     const where = {
       ...(activeOnly ? { isActive: true } : {}),
       ...(segment && segment !== 'all' ? { segment } : {}),
@@ -53,40 +55,45 @@ export async function GET(req: NextRequest) {
       orderBy: [{ sortOrder: 'asc' }, { createdAt: 'asc' }],
     });
 
-    return NextResponse.json({ data: cars, total: cars.length });
+    const resData = { data: cars, total: cars.length };
+    await logApi('GET /api/cars', input, { total: cars.length });
+    return NextResponse.json(resData);
   } catch (error) {
     console.error('[GET /api/cars]', error);
+    await logApi('GET /api/cars', input, { error: String(error) });
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
 
 // POST /api/cars - Cần JWT
 export const POST = withAuth(async (req) => {
+  let body: unknown;
   try {
-    const body = await req.json();
+    body = await req.json();
     const parsed = createCarSchema.safeParse(body);
 
     if (!parsed.success) {
-      return NextResponse.json(
-        { error: 'Validation Error', message: parsed.error.errors[0].message },
-        { status: 400 }
-      );
+      const resData = { error: 'Validation Error', message: parsed.error.errors[0].message };
+      await logApi('POST /api/cars', body, resData);
+      return NextResponse.json(resData, { status: 400 });
     }
 
     // Kiểm tra slug trùng
     const existing = await prisma.car.findUnique({ where: { slug: parsed.data.slug } });
     if (existing) {
-      return NextResponse.json(
-        { error: 'Conflict', message: 'Slug đã tồn tại' },
-        { status: 409 }
-      );
+      const resData = { error: 'Conflict', message: 'Slug đã tồn tại' };
+      await logApi('POST /api/cars', body, resData);
+      return NextResponse.json(resData, { status: 409 });
     }
 
     const car = await prisma.car.create({ data: parsed.data });
+    const resData = { data: car, message: 'Tạo xe thành công' };
+    await logApi('POST /api/cars', body, resData);
 
-    return NextResponse.json({ data: car, message: 'Tạo xe thành công' }, { status: 201 });
+    return NextResponse.json(resData, { status: 201 });
   } catch (error) {
     console.error('[POST /api/cars]', error);
+    await logApi('POST /api/cars', body, { error: String(error) });
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 });

@@ -97,6 +97,8 @@ pipeline {
                             . ./.env
                             set +a
                         fi
+                        echo "Gioi han task history cua Docker Swarm de khong luu qua nhieu container cu..."
+                        docker swarm update --task-history-limit 1 2>/dev/null || true
                         echo "Kiem tra va tao mang overlay vinfast_net neu chua co..."
                         docker network inspect vinfast_net >/dev/null 2>&1 || docker network create --driver overlay --attachable vinfast_net
                         docker stack deploy -c docker-compose.prod.yml admin_stack --with-registry-auth
@@ -105,9 +107,18 @@ pipeline {
             }
         }
 
-        stage('Clean Old Images') {
+        stage('Clean Old Containers & Images') {
             steps {
-                sh 'docker image prune -f'
+                script {
+                    echo "Don dep container va image cu tranh tran bo nho..."
+                    sh """
+                        echo "1. Xoa container cu da tat (Exited)..."
+                        docker container prune -f
+
+                        echo "2. Xoa cac image dangling khong dung..."
+                        docker image prune -f
+                    """
+                }
             }
         }
     }
@@ -115,6 +126,7 @@ pipeline {
     post {
         success {
             echo "Deploy Admin/BE thanh cong! Build #${BUILD_NUMBER}"
+            sh 'docker container prune -f && docker image prune -f'
         }
         failure {
             echo "Deploy Admin/BE that bai! Kiem tra lai log."

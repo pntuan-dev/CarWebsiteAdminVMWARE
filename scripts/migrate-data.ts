@@ -38,12 +38,16 @@ const DATA_FILE = fs.existsSync(path.resolve(process.cwd(), 'data/vinfast.json')
 const LOGS_DIR = path.resolve(process.cwd(), 'logs');
 const TXT_LOG_FILE = path.join(LOGS_DIR, 'migration.txt');
 
-const MINIO_ENDPOINT = process.env.MINIO_ENDPOINT ?? '192.168.247.130';
-const MINIO_PORT = parseInt(process.env.MINIO_PORT ?? '9000');
-const MINIO_ACCESS_KEY = process.env.MINIO_ACCESS_KEY ?? 'minioadmin';
-const MINIO_SECRET_KEY = process.env.MINIO_SECRET_KEY ?? 'minioadmin';
-const MINIO_BUCKET = process.env.MINIO_BUCKET ?? 'websitecar';
-const MINIO_PUBLIC_URL = process.env.MINIO_PUBLIC_URL ?? `http://${MINIO_ENDPOINT}:${MINIO_PORT}/${MINIO_BUCKET}`;
+const MINIO_ENDPOINT = process.env.MINIO_ENDPOINT;
+const MINIO_PORT = Number(process.env.MINIO_PORT);
+const MINIO_ACCESS_KEY = process.env.MINIO_ACCESS_KEY;
+const MINIO_SECRET_KEY = process.env.MINIO_SECRET_KEY;
+const MINIO_BUCKET = process.env.MINIO_BUCKET;
+const MINIO_PUBLIC_URL = process.env.MINIO_PUBLIC_URL;
+
+if (!MINIO_ENDPOINT || !MINIO_PORT || !MINIO_ACCESS_KEY || !MINIO_SECRET_KEY || !MINIO_BUCKET || !MINIO_PUBLIC_URL) {
+  throw new Error('Vui lòng cấu hình đầy đủ các biến môi trường MINIO trong file .env');
+}
 
 const prisma = new PrismaClient();
 
@@ -482,8 +486,12 @@ async function seedDatabase(urlMap: Map<string, string>): Promise<void> {
 
 async function createAdminUser(): Promise<void> {
   logSection('BƯỚC 4: Khởi Tạo Tài Khoản Admin');
-  const email = process.env.ADMIN_EMAIL ?? 'admin@vinfast.vn';
-  const password = process.env.ADMIN_PASSWORD ?? 'Admin@123456';
+  const email = process.env.ADMIN_EMAIL;
+  const password = process.env.ADMIN_PASSWORD;
+
+  if (!email || !password) {
+    throw new Error('Vui lòng cấu hình đầy đủ ADMIN_EMAIL và ADMIN_PASSWORD trong file .env');
+  }
 
   if (IS_DRY_RUN) {
     writeTxtLog(`[DRY-RUN] Tài khoản admin: ${email} / ${password}`, 'INFO');

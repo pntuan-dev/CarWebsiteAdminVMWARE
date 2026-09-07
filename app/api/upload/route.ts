@@ -15,9 +15,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from '@/lib/middleware';
 import { uploadToMinio, deleteFromMinio, getMimeType } from '@/lib/minio';
+import { logApi } from '@/lib/logger';
 
 // ─── POST /api/upload ─────────────────────────────────────────────────────────
 export const POST = withAuth(async (req) => {
+  let fileInfo: Record<string, unknown> = {};
   try {
     const { searchParams } = new URL(req.url);
     const queryFolder = searchParams.get('folder');
@@ -28,27 +30,26 @@ export const POST = withAuth(async (req) => {
     const folder = formFolder || queryFolder || 'uploads';
 
     if (!file) {
-      return NextResponse.json(
-        { error: 'Bad Request', message: 'Không có file được gửi lên' },
-        { status: 400 }
-      );
+      const resData = { error: 'Bad Request', message: 'Không có file được gửi lên' };
+      await logApi('POST /api/upload', { folder }, resData);
+      return NextResponse.json(resData, { status: 400 });
     }
+
+    fileInfo = { name: file.name, size: file.size, type: file.type, folder };
 
     // Giới hạn kích thước: 10MB
     if (file.size > 10 * 1024 * 1024) {
-      return NextResponse.json(
-        { error: 'Bad Request', message: 'File quá lớn, tối đa 10MB' },
-        { status: 400 }
-      );
+      const resData = { error: 'Bad Request', message: 'File quá lớn, tối đa 10MB' };
+      await logApi('POST /api/upload', fileInfo, resData);
+      return NextResponse.json(resData, { status: 400 });
     }
 
     // Chỉ cho phép file ảnh
     const allowedTypes = ['image/webp', 'image/png', 'image/jpeg', 'image/gif', 'image/svg+xml'];
     if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json(
-        { error: 'Bad Request', message: 'Chỉ cho phép file ảnh (webp, png, jpeg, gif, svg)' },
-        { status: 400 }
-      );
+      const resData = { error: 'Bad Request', message: 'Chỉ cho phép file ảnh (webp, png, jpeg, gif, svg)' };
+      await logApi('POST /api/upload', fileInfo, resData);
+      return NextResponse.json(resData, { status: 400 });
     }
 
     // Tạo object key: {folder}/{tên-an-toàn}-{timestamp}.{ext}
@@ -64,45 +65,45 @@ export const POST = withAuth(async (req) => {
     const buffer = Buffer.from(await file.arrayBuffer());
     const publicUrl = await uploadToMinio(key, buffer, getMimeType(file.name));
 
-    return NextResponse.json(
-      {
-        data: { url: publicUrl, key },
-        url: publicUrl,
-        key,
-        message: 'Upload ảnh thành công',
-      },
-      { status: 201 }
-    );
+    const resData = {
+      data: { url: publicUrl, key },
+      url: publicUrl,
+      key,
+      message: 'Upload ảnh thành công',
+    };
+    await logApi('POST /api/upload', fileInfo, resData);
+
+    return NextResponse.json(resData, { status: 201 });
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : 'Upload thất bại';
     console.error('[POST /api/upload]', error);
-    return NextResponse.json(
-      { error: 'Internal Server Error', message: `Lỗi upload: ${msg}` },
-      { status: 500 }
-    );
+    const resData = { error: 'Internal Server Error', message: `Lỗi upload: ${msg}` };
+    await logApi('POST /api/upload', fileInfo, { error: msg });
+    return NextResponse.json(resData, { status: 500 });
   }
 });
 
 // ─── DELETE /api/upload ───────────────────────────────────────────────────────
 export const DELETE = withAuth(async (req) => {
+  let body: { key?: string } = {};
   try {
-    const body = await req.json() as { key?: string };
+    body = (await req.json()) as { key?: string };
 
     if (!body.key || typeof body.key !== 'string' || body.key.trim() === '') {
-      return NextResponse.json(
-        { error: 'Bad Request', message: 'Thiếu key ảnh cần xoá' },
-        { status: 400 }
-      );
+      const resData = { error: 'Bad Request', message: 'Thiếu key ảnh cần xoá' };
+      await logApi('DELETE /api/upload', body, resData);
+      return NextResponse.json(resData, { status: 400 });
     }
 
     await deleteFromMinio(body.key.trim());
+    const resData = { message: 'Xoá ảnh thành công' };
+    await logApi('DELETE /api/upload', body, resData);
 
-    return NextResponse.json({ message: 'Xoá ảnh thành công' });
+    return NextResponse.json(resData);
   } catch (error) {
     console.error('[DELETE /api/upload]', error);
-    return NextResponse.json(
-      { error: 'Internal Server Error', message: 'Xoá ảnh thất bại' },
-      { status: 500 }
-    );
+    const resData = { error: 'Internal Server Error', message: 'Xoá ảnh thất bại' };
+    await logApi('DELETE /api/upload', body, { error: String(error) });
+    return NextResponse.json(resData, { status: 500 });
   }
 });

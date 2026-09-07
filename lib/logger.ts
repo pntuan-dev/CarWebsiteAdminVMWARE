@@ -1,7 +1,7 @@
 // Hệ thống Logger VinFast Admin: Ghi đồng thời ra file log và Database (SystemLog)
 import fs from 'fs';
 import path from 'path';
-import { prisma } from './prisma';
+import { prisma } from '@/lib/prisma';
 
 export type LogLevel = 'INFO' | 'SUCCESS' | 'WARN' | 'ERROR';
 export type LogCategory =
@@ -85,3 +85,84 @@ export const logger = {
   error: (category: LogCategory, message: string, metadata?: Record<string, unknown>) =>
     writeLog('ERROR', category, message, metadata),
 };
+
+/**
+ * Định dạng thời gian theo chuẩn: [hh/mm/ss dd/mm/yyyy]
+ */
+export function getFormattedTimestamp(): string {
+  const now = new Date();
+  const pad = (n: number) => n.toString().padStart(2, '0');
+
+  const hours = pad(now.getHours());
+  const minutes = pad(now.getMinutes());
+  const seconds = pad(now.getSeconds());
+  const day = pad(now.getDate());
+  const month = pad(now.getMonth() + 1);
+  const year = now.getFullYear();
+
+  return `[${hours}/${minutes}/${seconds} ${day}/${month}/${year}]`;
+}
+
+/**
+ * Che giấu thông tin nhạy cảm (password, token,...) trước khi ghi log
+ */
+function maskSensitiveData(data: unknown): unknown {
+  if (!data || typeof data !== 'object') return data;
+  if (Array.isArray(data)) return data.map(maskSensitiveData);
+
+  const clone: Record<string, unknown> = { ...(data as Record<string, unknown>) };
+  const sensitiveKeys = ['password', 'passwordHash', 'token', 'secret', 'MINIO_SECRET_KEY'];
+
+  for (const key of Object.keys(clone)) {
+    if (sensitiveKeys.includes(key) && typeof clone[key] === 'string') {
+      clone[key] = '******';
+    } else if (typeof clone[key] === 'object' && clone[key] !== null) {
+      clone[key] = maskSensitiveData(clone[key]);
+    }
+  }
+
+  return clone;
+}
+
+/**
+ * Function chung ghi log cho mọi API theo mẫu:
+ * [hh/mm/ss dd/mm/yyyy] API - input - output
+ */
+export async function logApi(api: string, input: unknown, output: unknown): Promise<void> {
+  const timestamp = getFormattedTimestamp();
+  const safeInput = maskSensitiveData(input);
+  const safeOutput = maskSensitiveData(output);
+
+  const inputStr = typeof safeInput === 'string' ? safeInput : JSON.stringify(safeInput ?? null);
+  const outputStr = typeof safeOutput === 'string' ? safeOutput : JSON.stringify(safeOutput ?? null);
+
+  const logLine = `${timestamp} ${api} - ${inputStr} - ${outputStr}`;
+
+  // 1. Ghi vào logs/system.txt
+  appendToTxtLog('system.txt', logLine);
+
+  // 2. Ghi ra Console
+  console.log(logLine);
+
+  // 3. Ghi vào Database SystemLog
+  try {
+    const jsonMetadata = JSON.parse(
+      JSON.stringify({
+        api,
+        input: safeInput,
+        output: safeOutput,
+      })
+    );
+
+    await prisma.systemLog.create({
+      data: {
+        level: 'INFO',
+        category: 'SYSTEM',
+        message: `${api} - ${inputStr} - ${outputStr}`,
+        metadata: jsonMetadata,
+      },
+    });
+  } catch (err) {
+    console.error('[logApi] Lỗi ghi DB log:', err);
+  }
+}

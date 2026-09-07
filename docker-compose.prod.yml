@@ -28,8 +28,14 @@ services:
         failure_action: rollback
       restart_policy:
         condition: on-failure
+    volumes:
+      - admin_logs:/app/logs
     networks:
       - vinfast_net
+
+volumes:
+  admin_logs:
+    driver: local
 
 networks:
   vinfast_net:

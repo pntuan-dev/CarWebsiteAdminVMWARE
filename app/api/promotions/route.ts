@@ -1,7 +1,7 @@
-// API Route: GET /api/promotions + POST
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { withAuth } from '@/lib/middleware';
+import { logApi } from '@/lib/logger';
 import { z } from 'zod';
 
 const createSchema = z.object({
@@ -15,31 +15,42 @@ const createSchema = z.object({
 });
 
 export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const activeOnly = searchParams.get('activeOnly') !== 'false';
+  const input = { activeOnly };
+
   try {
-    const { searchParams } = new URL(req.url);
-    const activeOnly = searchParams.get('activeOnly') !== 'false';
     const promos = await prisma.promotion.findMany({
       where: activeOnly ? { isActive: true } : {},
       orderBy: [{ sortOrder: 'asc' }, { createdAt: 'asc' }],
     });
-    return NextResponse.json({ data: promos, total: promos.length });
+    const resData = { data: promos, total: promos.length };
+    await logApi('GET /api/promotions', input, { total: promos.length });
+    return NextResponse.json(resData);
   } catch (error) {
     console.error('[GET /api/promotions]', error);
+    await logApi('GET /api/promotions', input, { error: String(error) });
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
 
 export const POST = withAuth(async (req) => {
+  let body: unknown;
   try {
-    const body = await req.json();
+    body = await req.json();
     const parsed = createSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: 'Validation Error', message: parsed.error.errors[0].message }, { status: 400 });
+      const resData = { error: 'Validation Error', message: parsed.error.errors[0].message };
+      await logApi('POST /api/promotions', body, resData);
+      return NextResponse.json(resData, { status: 400 });
     }
     const promo = await prisma.promotion.create({ data: parsed.data });
-    return NextResponse.json({ data: promo, message: 'Tạo ưu đãi thành công' }, { status: 201 });
+    const resData = { data: promo, message: 'Tạo ưu đãi thành công' };
+    await logApi('POST /api/promotions', body, resData);
+    return NextResponse.json(resData, { status: 201 });
   } catch (error) {
     console.error('[POST /api/promotions]', error);
+    await logApi('POST /api/promotions', body, { error: String(error) });
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 });
