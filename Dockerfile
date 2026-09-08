@@ -48,12 +48,12 @@ COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/prisma ./prisma
 
-# Set the correct permission for prerender cache and logs
-RUN mkdir -p logs .next && chown -R nextjs:nodejs logs .next
-
 # Copy standalone build and static assets
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Tạo thư mục logs với quyền đúng cho user nextjs
+RUN mkdir -p /app/logs && chown -R nextjs:nodejs /app/logs
 
 USER nextjs
 
